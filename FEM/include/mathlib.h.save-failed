@@ -1,0 +1,148 @@
+#ifndef MATHLIB_H
+#define MATHLIB_H
+
+#include <iostream>
+#include <cmath>
+#include <matrix.h>
+#include <string>
+
+matrix idmatrix(int size)
+{
+    matrix temp(size,size);
+    for (int i=1;i<=size; i++)
+    {
+        temp(i,i) = 1;
+    }
+
+    return temp;
+}
+
+matrix idmatrix(int size,std::string name)
+{
+    matrix temp(size,size,name);
+
+    for (int i=1;i<=size; i++)
+    {
+        temp(i,i) = 1;
+    }
+
+    return temp;
+}
+
+void rowMultiply(matrix &mat, int rowN, double var)
+{
+    if (!mat.isEmpty() && rowN<=mat.rowSize())
+    {
+        for (int i=1; i<=mat.colSize(); i++)
+            mat(rowN,i) = mat(rowN,i) * var;
+    }
+}
+
+void colMultiply(matrix &mat, int colN, double var)
+{
+    if (!mat.isEmpty() && colN<mat.colSize())
+    {
+        for (int i=1; i<=mat.rowSize(); i++)
+            mat(i,colN) = mat(i,colN) * var;
+    }
+}
+
+matrix GaussElimination(matrix &A, matrix &B)
+{
+    // Check
+    if (A.rowSize()!= B.rowSize())
+        std::cout << "The system of linear equations does not have an unique solution." << std::endl;
+    if (B.colSize() > 1)
+        std::cout << "Inappropriate column size of right hand matrix" << std::endl;
+
+    // Set output matrix size
+    matrix T(A.rowSize(),A.colSize()+1);    // Augmented Matrix
+    matrix x(A.rowSize(),1);                // Result Matrix
+
+    for (int i = 1; i <= T.rowSize(); i++)
+    {
+         for (int j = 1; j <=T.colSize(); j++)
+        {
+            if (j>A.colSize())
+                T(i,j) = B(i,1);
+            else
+                T(i,j) = A(i,j);
+        }
+    }
+
+    double maxRow, maxElem,tmp;
+    for (int i = 1 ; i<=T.rowSize();i++)
+    {
+        // Finding maximum value in the column
+        maxRow = i;
+        maxElem = T(i,i);
+
+        for (int j = i+1; j<=T.rowSize(); j++)
+        {
+            if (maxElem < abs(T(j,i)))
+            {
+                maxRow = j; maxElem = T(j,i);
+            }
+        }
+
+        // Swap current row with row with maximum value in the column
+            for (int j=1; j<=T.colSize(); j++)
+            {
+            tmp = T(maxRow,j);
+            T(maxRow,j) = T(i,j) ;
+            T(i,j) = tmp;
+            }
+
+        if (T(i,i)==0) {std::cout << "Matrix is singular"<<std::endl;}
+
+        // Pivoting the current row
+        tmp = 1/T(i,i);
+        rowMultiply(T,i,tmp);
+        for (int j=i+1; j<=T.rowSize();j++)
+        {
+            tmp = -T(j,i);
+            for (int k=1; k<=T.colSize(); k++)
+            {
+                T(j,k) = T(j,k) + tmp * T(i,k);
+            }
+
+        }
+
+    }
+     // Solving Ax = b by backward substitution
+     for (int i=T.rowSize();i>0;i--)
+     {
+         x(i,1) = T(i,T.colSize())/T(i,i);
+         for (int j=1;j<i;j++)
+         {
+           T(j,T.colSize()) = T(j,T.colSize()) - x(i,1)*T(j,i);
+         }
+     }
+
+return x;
+}
+
+double dotProduct(matrix &A, matrix &B)
+{
+    double result=0;
+    //Check the dimension of the matrices
+    if (A.colSize()!= B.colSize() || A.rowSize() != B.rowSize())
+        std::cout << "Vectors with equal dimension necessary for the operation" << std::endl;
+    if (A.colSize() == 1)
+        {
+            result = 0;
+            for (int i = 1; i<=A.rowSize();i++)
+                result = result + A(i,1)*B(i,1);
+        return result;
+        }
+    else if (A.rowSize() == 1)
+    {
+        result = 0;
+        for (int i = 1; i<=A.colSize(); i++)
+            result = result + A(1,i)*B(1,i);
+    return result;
+    }
+    else
+        return result;
+}
+#endif // MATHLIB_H

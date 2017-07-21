@@ -1,0 +1,92 @@
+# depslib dependency file v1.0
+1500646706 source:c:\workahtd\sg41389\c++\fem\main.cpp
+	"inputFileReader.h"
+	"matrix.h"
+	"writer.h"
+	"mathlib.h"
+
+1500039789 c:\workahtd\sg41389\c++\fem\include\matrix.h
+	<string>
+	<iostream>
+
+1499960957 source:c:\workahtd\sg41389\c++\fem\matrix.cpp
+	"matrix.h"
+
+1500041307 source:c:\workahtd\sg41389\c++\fem\src\matrix.cpp
+	"matrix.h"
+
+1500038396 c:\workahtd\sg41389\c++\fem\include\writer.h
+	<string>
+	<iostream>
+	<fstream>
+	<iomanip>
+	"table.h"
+	"matrix.h"
+
+1499782666 c:\workahtd\sg41389\c++\fem\include\table.h
+	<vector>
+	<string>
+	<iostream>
+	<sstream>
+	<iomanip>
+	<algorithm>
+
+1499782643 source:c:\workahtd\sg41389\c++\fem\src\table.cpp
+	"table.h"
+
+1500573068 source:c:\workahtd\sg41389\c++\fem\src\writer.cpp
+	"../include/writer.h"
+
+1500040384 source:c:\workahtd\sg41389\c++\fem\src\mathlib.cpp
+	"mathlib.h"
+
+1500578419 c:\workahtd\sg41389\c++\fem\include\mathlib.h
+	<iostream>
+	<cmath>
+	<matrix.h>
+	<string>
+
+1499801053 source:c:\workahtd\sg41389\c++\fem\src\reader.cpp
+	"reader.h"
+
+1499709225 c:\workahtd\sg41389\c++\fem\include\reader.h
+	<iostream>
+	<fstream>
+	<string>
+	<vector>
+	<sstream>
+	<boost/tokenizer.hpp>
+	<iomanip>
+
+1500649680 c:\workahtd\sg41389\c++\fem\include\inputfilereader.h
+	"reader.h"
+	<string>
+	"node.h"
+	"element.h"
+	"material.h"
+	"section.h"
+	<vector>
+	"writer.h"
+	<iomanip>
+
+1500649680 c:\workahtd\sg41389\c++\fem\include\node.h
+	<vector>
+
+1500649942 c:\workahtd\sg41389\c++\fem\include\element.h
+	<vector>
+	"node.h"
+	"material.h"
+	"section.h"
+
+1500648767 c:\workahtd\sg41389\c++\fem\include\material.h
+	<vector>
+
+1500648610 c:\workahtd\sg41389\c++\fem\include\section.h
+	<vector>
+
+1500649167 source:c:\workahtd\sg41389\c++\fem\src\inputfilereader.cpp
+	"inputFileReader.h"
+
+1500649883 source:c:\workahtd\sg41389\c++\fem\src\generatefem.cpp
+	"inputFileReader.h"
+
