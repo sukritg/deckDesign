@@ -1,3 +1,4 @@
+
 #ifndef MATRIX_H
 #define MATRIX_H
 
@@ -42,7 +43,4 @@ class matrix
         int rows, cols;
         std::string name;
 };
-
-
-
 #endif // MATRIX_H

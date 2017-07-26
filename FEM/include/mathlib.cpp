@@ -1,13 +1,4 @@
 
-#ifndef MATHLIB_H
-#define MATHLIB_H
-
-#include <iostream>
-#include <cmath>
-#include "matrix.h"
-#include <string>
-
-
 
 
 matrix idmatrix(int size)
@@ -311,5 +302,3 @@ matrix luSolve(matrix &A, matrix &B)
      }
     return x;
 }
-
-#endif // MATHLIB_H

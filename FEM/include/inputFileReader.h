@@ -1,3 +1,4 @@
+#pragma once
 #ifndef INPUTFILEREADER_H
 #define INPUTFILEREADER_H
 
@@ -7,6 +8,9 @@
 #include "element.h"
 #include "material.h"
 #include "section.h"
+#include "bConditions.h"
+#include "load.h"
+#include "lcombination.h"
 #include <vector>
 #include "writer.h"
 #include <iomanip>
@@ -58,12 +62,18 @@ class inputFileReader
         double SLAB_THICKNESS = 8.0;
         double Area = 96;
         double Inertia = 512;
+        double DIST_PARAPET_LEFT = 0; //0.6875;
+        double DIST_PARAPET_RIGHT = 0; //2.3958;
+        double DIST_FWS_LEFT = 0; //1.5808;
+        double DIST_FWS_RIGHT = 0; //1.5;
 
-        std::vector <node> nodeData;
+        std::vector<node> nodeData;
         std::vector<element> elementData;
         std::vector<material> materialData; // Unused - Only 1 material
         std::vector<section> sectionData;   // Unused - Only 1 section
-
+        std::vector<bConditions> bcData;
+        std::vector<lCombination> lcData;   // Predefined 3 cases
+        std::vector<load> loadData;
 };
 
 #endif // INPUTFILEREADER_H

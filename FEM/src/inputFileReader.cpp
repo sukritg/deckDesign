@@ -106,13 +106,13 @@ void inputFileReader::tokenAction(token tok,std::vector<std::string> &line)
         }
     case token::PERM_STRESS_S:
         {
-            std::cout<< "Permissible tensile stress in steel found" <<std::endl;
+            std::cout<< "Permissible tensile stress in steel found" << std::endl;
             PERM_STRESS_S = toDouble(line[1]);
             break;
         }
     case token::WT_SW:
         {
-            std::cout<< "Unit weight of concrete found" <<std::endl;
+            std::cout<< "Unit weight of concrete found" << std::endl;
             WT_SW = toDouble(line[1]);
             break;
         }
@@ -120,12 +120,16 @@ void inputFileReader::tokenAction(token tok,std::vector<std::string> &line)
         {
             std::cout<< "Unit weight of future wearing surface found" <<std::endl;
             WT_FWS = toDouble(line[1]);
+            DIST_FWS_LEFT = toDouble(line[2]);
+            DIST_FWS_RIGHT = toDouble(line[3]);
             break;
         }
     case token::WT_PARAPET:
         {
             std::cout<< "Unit weight of parapet found" <<std::endl;
             WT_PARAPET = toDouble(line[1]);
+            DIST_PARAPET_LEFT = toDouble(line[2]);
+            DIST_PARAPET_RIGHT = toDouble(line[3]);
             break;
         }
     case token::WT_SIP:
