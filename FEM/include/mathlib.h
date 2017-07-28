@@ -7,9 +7,19 @@
 #include "matrix.h"
 #include <string>
 
+class mathlib
+{
+public:
 
+mathlib()
+{
 
+}
 
+~mathlib()
+{
+
+}
 matrix idmatrix(int size)
 {
     matrix temp(size,size);
@@ -33,20 +43,20 @@ matrix idmatrix(int size,std::string name)
     return temp;
 }
 
-void rowMultiply(matrix &mat, int rowN, double var)
+void rowMultiply(matrix &mat,unsigned int rowN, double var)
 {
     if (!mat.isEmpty() && rowN<=mat.rowSize())
     {
-        for (int i=1; i<=mat.colSize(); i++)
+        for (unsigned int i=1; i<=mat.colSize(); i++)
             mat(rowN,i) = mat(rowN,i) * var;
     }
 }
 
-void colMultiply(matrix &mat, int colN, double var)
+void colMultiply(matrix &mat,unsigned int colN, double var)
 {
     if (!mat.isEmpty() && colN<mat.colSize())
     {
-        for (int i=1; i<=mat.rowSize(); i++)
+        for (unsigned int i=1; i<=mat.rowSize(); i++)
             mat(i,colN) = mat(i,colN) * var;
     }
 }
@@ -63,9 +73,9 @@ matrix gaussSolve(matrix &A, matrix &B)
     matrix T(A.rowSize(),A.colSize()+1);    // Augmented Matrix
     matrix x(A.rowSize(),1);                // Result Matrix
 
-    for (int i = 1; i <= T.rowSize(); i++)
+    for (unsigned int i = 1; i <= T.rowSize(); i++)
     {
-         for (int j = 1; j <=T.colSize(); j++)
+         for (unsigned int j = 1; j <=T.colSize(); j++)
         {
             if (j>A.colSize())
                 T(i,j) = B(i,1);
@@ -75,13 +85,13 @@ matrix gaussSolve(matrix &A, matrix &B)
     }
 
     double maxRow, maxElem,tmp;
-    for (int i = 1 ; i<=T.rowSize();i++)
+    for (unsigned int i = 1 ; i<=T.rowSize();i++)
     {
         // Finding maximum value in the column
         maxRow = i;
         maxElem = T(i,i);
 
-        for (int j = i+1; j<=T.rowSize(); j++)
+        for (unsigned int j = i+1; j<=T.rowSize(); j++)
         {
             if (maxElem < std::abs(T(j,i)))
             {
@@ -90,7 +100,7 @@ matrix gaussSolve(matrix &A, matrix &B)
         }
 
         // Swap current row with row with maximum value in the column
-            for (int j=1; j<=T.colSize(); j++)
+            for (unsigned int j=1; j<=T.colSize(); j++)
             {
             tmp = T(maxRow,j);
             T(maxRow,j) = T(i,j) ;
@@ -102,10 +112,10 @@ matrix gaussSolve(matrix &A, matrix &B)
         // Pivoting the current row
         tmp = 1/T(i,i);
         rowMultiply(T,i,tmp);
-        for (int j=i+1; j<=T.rowSize();j++)
+        for (unsigned int j=i+1; j<=T.rowSize();j++)
         {
             tmp = -T(j,i);
-            for (int k=1; k<=T.colSize(); k++)
+            for (unsigned int k=1; k<=T.colSize(); k++)
             {
                 T(j,k) = T(j,k) + tmp * T(i,k);
             }
@@ -133,14 +143,14 @@ double dotProduct(matrix &A, matrix &B)
     if (A.colSize() == 1)
         {
             result = 0;
-            for (int i = 1; i<=A.rowSize();i++)
+            for (unsigned int i = 1; i<=A.rowSize();i++)
                 result = result + A(i,1)*B(i,1);
         return result;
         }
     else if (A.rowSize() == 1)
     {
         result = 0;
-        for (int i = 1; i<=A.colSize(); i++)
+        for (unsigned int i = 1; i<=A.colSize(); i++)
             result = result + A(1,i)*B(1,i);
     return result;
     }
@@ -165,16 +175,16 @@ matrix choleskySolve(matrix &A, matrix &B)
     matrix x(A.rowSize(),1);              // Result Matrix
     double temp;
 
-    for (int i=1; i <= A.rowSize(); i++)
+    for (unsigned int i=1; i <= A.rowSize(); i++)
     {
         temp = 0;
 
-        for (int j=1; j <= i; j++)
+        for (unsigned int j=1; j <= i; j++)
         {
             if (i==j)
                {
                     temp = 0;
-                    for (int k=1; k < i; k++)
+                    for (unsigned int k=1; k < i; k++)
                     {
                         temp = temp + pow(L(i,k),2.0);
                     }
@@ -183,7 +193,7 @@ matrix choleskySolve(matrix &A, matrix &B)
                else
                {
                    temp = 0;
-                   for (int k=1; k < i; k++)
+                   for (unsigned int k=1; k < i; k++)
                    {
                        temp = temp + L(i,k)*L(j,k);
                    }
@@ -195,10 +205,10 @@ matrix choleskySolve(matrix &A, matrix &B)
     // Solving Ly = b by forward substitution
     matrix y = x;
     y.setValue(0.0);
-     for (int i=1; i<=L.rowSize(); i++)
+     for (unsigned int i=1; i<=L.rowSize(); i++)
      {
          temp = 0;
-         for (int j=1; j<i; j++)
+         for (unsigned int j=1; j<i; j++)
          {
            temp = temp + y(j,1) * L(i,j);
          }
@@ -208,10 +218,10 @@ matrix choleskySolve(matrix &A, matrix &B)
     // Solving L'x = y by backward substitution
     L = ~L;
 
-    for (int i=L.rowSize(); i >= 1; i--)
+    for (unsigned int i=L.rowSize(); i >= 1; i--)
      {
          temp = 0;
-         for (int j=i+1; j <= L.colSize(); j++)
+         for (unsigned int j=i+1; j <= L.colSize(); j++)
          {
            temp = temp + x(j,1) * L(i,j);
           }
@@ -235,13 +245,13 @@ matrix luSolve(matrix &A, matrix &B)
 
 
     double maxRow, maxElem,tmp;
-    for (int i = 1 ; i<=A.rowSize();i++)
+    for (unsigned int i = 1 ; i<=A.rowSize();i++)
     {
         // Finding maximum value in the column
         maxRow = i;
         maxElem = U(i,i);
 
-        for (int j = i+1; j<=U.rowSize(); j++)
+        for (unsigned int j = i+1; j<=U.rowSize(); j++)
         {
             if (maxElem < std::abs(U(j,i)))
             {
@@ -250,7 +260,7 @@ matrix luSolve(matrix &A, matrix &B)
         }
 
         // Swap current row with row with maximum value in the column
-            for (int j=1; j<=U.colSize(); j++)
+            for (unsigned int j=1; j<=U.colSize(); j++)
             {
             tmp = U(maxRow,j);
             U(maxRow,j) = U(i,j) ;
@@ -262,10 +272,10 @@ matrix luSolve(matrix &A, matrix &B)
         // Pivoting the current row
         tmp = 1/U(i,i);
         //rowMultiply(U,i,tmp);
-        for (int j=i+1; j<=U.rowSize();j++)
+        for (unsigned int j=i+1; j<=U.rowSize();j++)
         {
             tmp = -U(j,i);
-            for (int k=1; k<=U.colSize(); k++)
+            for (unsigned int k=1; k<=U.colSize(); k++)
             {
 
                 U(j,k) = U(j,k) + tmp * U(i,k)/U(i,i);
@@ -273,9 +283,9 @@ matrix luSolve(matrix &A, matrix &B)
         }
     }
 
-    for (int i=1; i<=L.rowSize(); i++)
+    for (unsigned int i=1; i<=L.rowSize(); i++)
     {
-        for(int j=i; j<=L.colSize(); j++)
+        for(unsigned int j=i; j<=L.colSize(); j++)
         {
             if (i==j)
                 L(i,j) = 1;
@@ -288,10 +298,10 @@ matrix luSolve(matrix &A, matrix &B)
     matrix y = x;
     y.setValue(0.0);
     double temp;
-     for (int i=1; i<=L.rowSize(); i++)
+     for (unsigned int i=1; i<=L.rowSize(); i++)
      {
          temp = 0;
-         for (int j=1; j<i; j++)
+         for (unsigned int j=1; j<i; j++)
          {
            temp = temp + y(j,1) * L(i,j);
          }
@@ -300,10 +310,10 @@ matrix luSolve(matrix &A, matrix &B)
 
     // Solving Ux = y by backward substitution
 
-    for (int i=U.rowSize(); i >= 1; i--)
+    for (unsigned int i=U.rowSize(); i >= 1; i--)
      {
          temp = 0;
-         for (int j=i+1; j <= U.colSize(); j++)
+         for (unsigned int j=i+1; j <= U.colSize(); j++)
          {
            temp = temp + x(j,1) * U(i,j);
           }
@@ -311,5 +321,5 @@ matrix luSolve(matrix &A, matrix &B)
      }
     return x;
 }
-
+};
 #endif // MATHLIB_H

@@ -10,7 +10,7 @@ matrix::matrix()
 }
 
 
-matrix::matrix(int _rows, int _cols)
+matrix::matrix(unsigned int _rows,unsigned int _cols)
 {
     data = nullptr;
     setSize(_rows,_cols);
@@ -18,7 +18,7 @@ matrix::matrix(int _rows, int _cols)
 }
 
 
-matrix::matrix(int _rows, int _cols, std::string _name)
+matrix::matrix(unsigned int _rows,unsigned int _cols, std::string _name)
 {
     data = nullptr;
     name = _name;
@@ -30,9 +30,9 @@ matrix::matrix(const matrix &mat)
     data = nullptr;
     name = mat.getName();
     setSize(mat.rowSize(),mat.colSize());
-    for (int i=0; i < rows; i++)
+    for (unsigned int i=0; i < rows; i++)
     {
-        for (int j=0; j < cols; j++)
+        for (unsigned int j=0; j < cols; j++)
         {
             data[i][j] = mat(i+1,j+1);
         }
@@ -75,7 +75,7 @@ matrix::~matrix()
 
 
 
-void matrix::setSize(int _rows, int _cols)
+void matrix::setSize(unsigned int _rows,unsigned int _cols)
 {
     if (data != nullptr)
     {
@@ -89,17 +89,17 @@ void matrix::setSize(int _rows, int _cols)
         rows = _rows;
         cols = _cols;
         data = new double *[rows];
-        for (int i=0; i<rows; i++)
+        for (unsigned int i=0; i<rows; i++)
             data[i] = new double[cols];
     }
     setValue(0);
 }
 
-int matrix::rowSize() const
+unsigned int matrix::rowSize() const
 {
     return rows;
 }
-int matrix::colSize() const
+unsigned int matrix::colSize() const
 {
     return cols;
 }
@@ -114,14 +114,16 @@ void matrix::setValue(double _value)
     {
         errorHandler(3); return;
     }
-    for (int i=0; i<rows; i++)
+    for (unsigned int i=0; i<rows; i++)
     {
-        for (int j=0; j<cols; j++)
+        for (unsigned int j=0; j<cols; j++)
         {
             data[i][j] = _value;
         }
     }
 }
+
+// Assignment
 
 matrix & matrix::operator= (const matrix &rhs)
  {
@@ -131,30 +133,28 @@ matrix & matrix::operator= (const matrix &rhs)
         {
             errorHandler(2); return *this;
         }
-    // deallocate memory
-        if (data != nullptr) {delete[] data;}
-    // allocate memory
+	 // allocate memory
         name = rhs.getName();
         setSize(rhs.rowSize(),rhs.colSize());
     // copy value from rhs
-        for (int i=0; i<rows; i++)
+        for (unsigned int i=0; i<rows; i++)
         {
-            for( int j=0; j<cols; j++)
+            for(unsigned int j=0; j<cols; j++)
             {
-                data[i][j] = rhs.data[i][j];
+                data[i][j] = rhs(i+1,j+1);
             }
         }
         return *this;
  }
 
 
-
-
+// Check for empty matrix
  bool matrix::isEmpty()
  {
      if (data == nullptr) return true;
      else return false;
  }
+
 
  bool matrix::isEmpty() const
  {
@@ -162,14 +162,17 @@ matrix & matrix::operator= (const matrix &rhs)
      else return false;
  }
 
+ // Set name of the matrix object
  void matrix::setName(std::string _name)
  {
      name = _name;
  }
 
+
 //Operators
 
-double & matrix::operator() (int _row, int _col)
+ //call operator
+double & matrix::operator() (unsigned int _row, unsigned int _col)
 {
     if (_row <= 0 || _col <= 0 || _row > rows || _col > cols)
         {errorHandler(1); return data[0][0];}
@@ -180,7 +183,7 @@ double & matrix::operator() (int _row, int _col)
 }
 
 
-double & matrix::operator() (int _row, int _col) const
+double & matrix::operator() (unsigned int _row,unsigned int _col) const
 {
     if (_row <= 0 || _col <= 0 || _row > rows || _col > cols)
         {errorHandler(1); return data[0][0];}
@@ -188,6 +191,31 @@ double & matrix::operator() (int _row, int _col) const
         {
             return data[_row-1][_col-1];
         }
+}
+
+
+
+matrix matrix::operator()(std::vector<int> rowvec, std::vector<int> colvec)
+{
+	matrix temp(rowvec.size(), colvec.size(),"temp");
+
+	if (colvec.size() == rowvec.size())
+	{
+	for (unsigned int i = 0; i < rowvec.size(); i++)
+	{
+		for (unsigned int j = 0; j < colvec.size(); j++)
+		{
+		    //temp(i+1,j+1) = data[rowvec[i]-1][colvec[j]-1];//*at(rowvec[i]-1,colvec[j]-1);
+		    temp(i+1,j+1) = data[rowvec[i]-1][colvec[j]-1];
+		}
+	}
+	}
+	else
+	{
+		std::cout << "Vector sizes inappropriate" << std::endl;
+	}
+	return 	temp;
+
 }
 
 // Addition
@@ -199,16 +227,16 @@ matrix matrix::operator+ (const matrix &rhs)
     {
         matrix temp(rows,cols);
 
-        for (int i = 0; i < rows; i++)
+        for (unsigned int i = 0; i < rows; i++)
         {
-            for (int j = 0; j < cols; j++)
+            for (unsigned int j = 0; j < cols; j++)
             {
                 temp(i+1,j+1) = rhs(i+1,j+1) + data[i][j];
             }
         }
     return temp;
     }
-
+    return *this;
 }
 
 // Subtraction
@@ -220,16 +248,19 @@ matrix matrix::operator- (const matrix &rhs)
     {
         matrix temp(rows,cols);
 
-        for (int i = 0; i < rows; i++)
+        for (unsigned int i = 0; i < rows; i++)
         {
-            for (int j = 0; j < cols; j++)
+            for (unsigned int j = 0; j < cols; j++)
             {
                 temp(i+1,j+1) = - rhs(i+1,j+1) + data[i][j];
             }
         }
     return temp;
     }
+    return *this;
 }
+
+// Multiplication
 
 matrix matrix::operator* (const matrix &rhs)
 {
@@ -238,12 +269,12 @@ matrix matrix::operator* (const matrix &rhs)
         matrix temp(rows,rhs.colSize());
         temp.setValue(0);
 
-        for (int i=0; i < rows; i++)
+        for (unsigned int i=0; i < rows; i++)
         {
-            for (int j=0; j < rhs.colSize(); j++)
+            for (unsigned int j=0; j < rhs.colSize(); j++)
             {
                 temp(i+1,j+1) = 0;
-                for(int k=0; k < cols; k++)
+                for(unsigned int k=0; k < cols; k++)
                 {
                     temp(i+1,j+1) = temp(i+1,j+1) + data[i][k] * rhs(k+1,j+1);
                 }
@@ -252,16 +283,17 @@ matrix matrix::operator* (const matrix &rhs)
     return temp;
     }
     else errorHandler(4);
+    return *this;
 }
 
-
+// Matrix Transpose
 matrix matrix::operator~()
 {
     matrix temp(cols,rows);
     temp.setName("Inverse of "+name);
-    for (int i = 0; i<cols; i++)
+    for (unsigned int i = 0; i<cols; i++)
     {
-        for (int j = 0; j<rows; j++)
+        for (unsigned int j = 0; j<rows; j++)
         {
             temp(i+1,j+1) = data[j][i];
         }

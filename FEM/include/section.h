@@ -10,8 +10,8 @@ class section
     public:
     void setProperty(std::vector<double> &data)
     {
-        Ax = data[1];
-        Iz = data[2];
+        Ax = data[0];
+        Iz = data[1];
     }
 
     std::vector<double> getProperty()

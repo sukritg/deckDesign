@@ -11,13 +11,20 @@
 #include "material.h"
 #include "section.h"
 #include "lcombination.h"
+#include "NodalResponse.h"
+#include "ElementResponse.h"
+
+
 #include <iomanip>
 #include "mathlib.h"
-
+#include "writer.h"
+#include <iterator>
 class FEMEngine
 {
 public:
-    FEMEngine(const std::vector<node> &_nodalData,
+    FEMEngine();
+   ~FEMEngine();
+    void start(const std::vector<node> &_nodalData,
               const std::vector<element> &_elementData,
               const std::vector<material> &_materialData,
               const std::vector<section> &_sectionData,
@@ -26,11 +33,26 @@ public:
               const std::vector<lCombination> &_loadComboData);
 
 
-    ~FEMEngine();
+    void createIDMatrix();
+    void createStiffMatrix();
+    void createForceMatrix();
+    void applyBC();
+    void solve();
+    void calcElmForces();
+
+    void populateNodalResData();
+    void populateElementResData();
+
+    void printNodeTable();
+    void printElementTable();
+    element & searchID(std::vector<element> &elData,int _id);
+
+
 
 protected:
 
 private:
+         //Input Parameters
          std::vector<node> nodalData;
          std::vector<element> elementData;
          std::vector<material> materialData;
@@ -38,6 +60,23 @@ private:
          std::vector<bConditions> bcData;
          std::vector<load> loadData;
          std::vector<lCombination> loadComboData;
+
+
+         //Output Parameters
+         std::vector<std::vector<NodalResponse>> nodalRData;
+         std::vector<std::vector<ElementResponse>> elementRData;
+
+         matrix IDArray;                            //ID matrix
+         matrix K;                                  //Stiffness matrix
+         matrix Kr;                                 //Reduced Stiffness matrix
+         matrix F;                                  //Force matrix
+         matrix Fr;                                 //Reduced Force matrix
+         matrix d;                                  //Displacement matrix
+         matrix R;                                  //Reaction matrix
+         matrix force;
+         std::vector<matrix> forces;
+         matrix ElmForce;
+         std::vector<matrix> ElmForces;                //Element Force Matrix
 
 
 };

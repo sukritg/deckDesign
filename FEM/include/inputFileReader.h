@@ -14,6 +14,7 @@
 #include <vector>
 #include "writer.h"
 #include <iomanip>
+#include "FEMEngine.h"
 
 enum class token
 {
@@ -43,6 +44,7 @@ class inputFileReader
         token tokenCheck(std::vector<std::string> line);
         void tokenAction(token tok, std::vector<std::string> &line);
         void generateFEModel();
+        void startFEM     ();
 
     protected:
 
@@ -74,6 +76,7 @@ class inputFileReader
         std::vector<bConditions> bcData;
         std::vector<lCombination> lcData;   // Predefined 3 cases
         std::vector<load> loadData;
+        FEMEngine FE;
 };
 
 #endif // INPUTFILEREADER_H

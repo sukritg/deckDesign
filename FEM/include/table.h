@@ -13,12 +13,23 @@ std::string toString(T dat)
 {
     std::string res;
     std::stringstream ss;
-    ss << std::fixed << std::setprecision(3) << dat;
+    ss << std::scientific << std::setprecision(3) << dat;
     ss>>res;
     ss.clear();
     return res;
 }
 
+template <typename T>
+std::string toString(T dat, double tol)
+{
+    std::string res;
+    std::stringstream ss;
+    if (std::abs(dat) < tol){dat = 0.0;}
+    ss << std::scientific << std::setprecision(3) << dat;
+    ss>>res;
+    ss.clear();
+    return res;
+}
 
 struct rowData
 {

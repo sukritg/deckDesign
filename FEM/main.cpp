@@ -1,14 +1,18 @@
 #include "inputFileReader.h"
 #include "FEMEngine.h"
+#include "mathlib.h"
 
 int main()
 {
 
 
 // Input Data
-inputFileReader input("input.txt");
-input.read();
-input.generateFEModel();
+inputFileReader FE("input.txt");
+FE.read();
+FE.generateFEModel();
+
+FE.startFEM();
+
 
 
 

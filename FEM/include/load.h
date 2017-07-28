@@ -22,6 +22,7 @@ public:
         elID = _elID;
         type = _type;
     }
+
     load(int _loadID, loadType _type,int _elID)
     {
         elID.clear();
@@ -29,22 +30,35 @@ public:
         elID.push_back(_elID);
         type = _type;
     }
+
     void setProperty(std::vector<double> &_values)
     {
         values = _values;
     }
-    std::vector<double> getProperty()
+
+    std::vector <int> getElements()
+    {
+        return elID;
+    }
+
+    std::vector<double> getValues()
     {
         return values;
     }
+
     int getID()
     {
         return loadID;
     }
+
     loadType getType()
     {
         return type;
     }
+
+
+
+
     void displayProperty()
     {
         switch (type)

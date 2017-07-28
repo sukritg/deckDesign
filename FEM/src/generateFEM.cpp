@@ -7,14 +7,13 @@ void inputFileReader::generateFEModel()
     element e;
     int iD = 1;
     // Node Definition
-    if (BEAM_OVR_LENGTH>0)
-    {
+
         n.setID(iD);
         n.setProperty(0,0);
         nodeData.push_back(n);
         iD++;
         n.setID(iD);
-        n.setProperty(BEAM_OVR_LENGTH,0);
+        n.setProperty(BEAM_OVR_LENGTH*12,0);
         nodeData.push_back(n);
         iD++;
 
@@ -22,23 +21,14 @@ void inputFileReader::generateFEModel()
         {
             n.setID(iD);
             iD++;
-            n.setProperty(BEAM_OVR_LENGTH+BEAM_CC_SPACING*i,0);
+            n.setProperty(((BEAM_OVR_LENGTH+BEAM_CC_SPACING*i)*12),0);
             nodeData.push_back(n);
         }
         n.setID(iD);
-        n.setProperty(length,0);
+        n.setProperty(length*12,0);
         nodeData.push_back(n);
-    }
-    else
-    {
-        for (int i=1; i<=NUM_BEAMS-1; i++)
-        {
-            n.setID(iD);
-            iD++;
-            n.setProperty(BEAM_OVR_LENGTH+BEAM_CC_SPACING*i,0);
-            nodeData.push_back(n);
-        }
-    }
+
+
     // Section Definition
     // Expecting 1 section property
     section s;
@@ -54,7 +44,8 @@ void inputFileReader::generateFEModel()
     material m;
     m.setID(1);
     values.push_back(1820*sqrt(PERM_STRESS_C));
-
+    m.setProperty(values);
+    values.clear();
     // Element Definition
     node SN, EN;
     std::vector<node> nData;
@@ -107,7 +98,7 @@ void inputFileReader::generateFEModel()
             // Self weight of the slab
             for (unsigned int e=0; e<elementData.size(); e++)
                 el.push_back(elementData[e].getID());
-            intensity = (WT_SW/(12*12*12*1000))*12*SLAB_THICKNESS;
+            intensity = (WT_SW/(12*12*12*1000))*12*SLAB_THICKNESS*-1;
             load loading1(iD,loadType::EU_Fy,el);
             values.push_back(intensity);
             loading1.setProperty(values);
@@ -116,7 +107,7 @@ void inputFileReader::generateFEModel()
             _lData.push_back(loading1);
             el.clear();
             values.clear();
-
+/*
             // Stay in place deck
             for (unsigned int e=1; e<elementData.size()-1; e++)
                  el.push_back(elementData[e].getID());
@@ -129,7 +120,7 @@ void inputFileReader::generateFEModel()
             _lData.push_back(loading2);
             el.clear();
             values.clear();
-
+*/
             // Load combination - 1
             lCombination lc(lcID);
             lc.setProperty(_lData);
@@ -146,7 +137,7 @@ void inputFileReader::generateFEModel()
             // Left End
             int e = elementData[0].getID();
             load loading1(iD,loadType::EC_Fy,e);
-            intensity = WT_PARAPET;
+            intensity = WT_PARAPET*-1;
             dist = DIST_PARAPET_LEFT * 12;
             values.push_back(intensity);
             values.push_back(dist);
@@ -158,7 +149,7 @@ void inputFileReader::generateFEModel()
             // Right End
             e = elementData[elementData.size()-1].getID();
             load loading2(iD,loadType::EC_Fy,e);
-            intensity = WT_PARAPET;
+            intensity = WT_PARAPET*-1;
             dist = DIST_PARAPET_RIGHT * 12;
             values.push_back(intensity);
             values.push_back(dist);
@@ -182,7 +173,7 @@ void inputFileReader::generateFEModel()
             // Future wearing surface
              for (unsigned int e=1; e<elementData.size()-1; e++)
                  el.push_back(elementData[e].getID());
-            intensity = (WT_FWS/(12*12)) * 12;
+            intensity = (WT_FWS/(12*12)) * 12 *-1;
             load loading1(iD,loadType::EU_Fy,el);
             values.push_back(intensity);
             loading1.setProperty(values);
@@ -193,7 +184,7 @@ void inputFileReader::generateFEModel()
             values.clear();
 
             int e = 1;
-            intensity = (WT_FWS/(12*12)) * 12;
+            intensity = (WT_FWS/(12*12)) * 12 * -1;
             load loading2(iD,loadType::EU_Fy,e);
             values.push_back(intensity);
             values.push_back(DIST_FWS_LEFT*12);
@@ -205,7 +196,7 @@ void inputFileReader::generateFEModel()
             values.clear();
 
             e = elementData[elementData.size()-1].getID();
-            intensity = (WT_FWS/(12*12)) * 12;
+            intensity = (WT_FWS/(12*12)) * 12 * -1;
             load loading3(iD,loadType::EU_Fy,e);
             values.push_back(intensity);
             values.push_back(0.0);
@@ -260,7 +251,6 @@ void inputFileReader::generateFEModel()
     std::cout << "========================="<< std::endl;
     for (unsigned int i=0; i<lcData.size(); i++)
         lcData[i].displayProperty();
-
-
-
 }
+
+

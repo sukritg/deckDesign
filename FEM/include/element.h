@@ -20,7 +20,18 @@ class element
         mate = _mate;
         sec = _sec;
     }
-
+    material getMaterial()
+    {
+        return mate;
+    }
+    section getSection()
+    {
+        return sec;
+    }
+    std::vector<node> getNodes()
+    {
+        return nodes;
+    }
     int getID()
     {
         return elementID;

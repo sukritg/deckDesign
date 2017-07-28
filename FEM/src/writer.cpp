@@ -149,10 +149,10 @@ void writer::close()
      out << "Matrix: " << mat.getName() <<std::endl;
      out << "Number of rows = " << mat.rowSize() << std::endl;
      out << "Number of columns = " << mat.colSize() << std::endl;
-     for (int i = 1; i<=mat.rowSize(); i++)
+     for (unsigned int i = 1; i<=mat.rowSize(); i++)
      {
          out << std::setw(1) << "+";
-         for (int j = 1; j<=mat.colSize();j++)
+         for (unsigned int j = 1; j<=mat.colSize();j++)
             {
                 out << std::setfill('-') << std::setw(width) << "";
                 out << std::setw(1) << "+";
@@ -160,7 +160,7 @@ void writer::close()
 
          out << std::endl << std::setfill(' ');
 
-         for (int j = 1; j<=mat.colSize(); j++)
+         for (unsigned int j = 1; j<=mat.colSize(); j++)
          {
              out <<std::setw(1)<<"|";
              out << std::left << std::setw(width) << mat(i,j);
@@ -169,7 +169,7 @@ void writer::close()
          out << std::endl;
      }
       out << std::setw(1) << "+";
-     for (int j = 1; j<=mat.colSize();j++)
+     for (unsigned int j = 1; j<=mat.colSize();j++)
             {
                 out << std::setfill('-') << std::setw(width) << "";
                 out << std::setw(1) << "+";

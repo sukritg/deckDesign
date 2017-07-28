@@ -34,7 +34,9 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
+		<Unit filename="include/ElementResponse.h" />
 		<Unit filename="include/FEMEngine.h" />
+		<Unit filename="include/NodalResponse.h" />
 		<Unit filename="include/bConditions.h" />
 		<Unit filename="include/element.h" />
 		<Unit filename="include/inputFileReader.h" />
@@ -49,10 +51,14 @@
 		<Unit filename="include/table.h" />
 		<Unit filename="include/writer.h" />
 		<Unit filename="main.cpp" />
+		<Unit filename="src/ElementResponse.cpp" />
+		<Unit filename="src/FEMControl.cpp" />
 		<Unit filename="src/FEMEngine.cpp" />
+		<Unit filename="src/NodalResponse.cpp" />
 		<Unit filename="src/generateFEM.cpp" />
 		<Unit filename="src/inputFileReader.cpp" />
 		<Unit filename="src/matrix.cpp" />
+		<Unit filename="src/printer.cpp" />
 		<Unit filename="src/reader.cpp" />
 		<Unit filename="src/table.cpp" />
 		<Unit filename="src/writer.cpp" />
