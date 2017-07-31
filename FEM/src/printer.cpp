@@ -68,17 +68,16 @@ for (unsigned int i=0; i< loadComboData.size(); i++)
 
 void FEMEngine::printElementTable()
 {
-       double tol = 1e-6;
-   // Write output to file
-    writer output("output.txt");
+double tol = 1e-6;
+// Write output to file
+writer output("output.txt");
 
 // Write Input Table
-    // Table Template
+// Table Template
 for (unsigned int i=0; i< loadComboData.size(); i++)
 {
     rowData elm;   // row data structure
-    int rows = elementData.size()*2; // number of rows
-    int cols = 4; // number of columns
+    int cols = 5; // number of columns
     std::vector<rowData> dataTable; //vector of row data (DATA)
     std::vector<rowData> reportTable; // vector of row data (REPORT)
     std::vector<std::string> headers; //vector of header strings
@@ -97,19 +96,19 @@ for (unsigned int i=0; i< loadComboData.size(); i++)
         align.push_back(cons_align);
 
     // Table Headers
+    headers.push_back("Element");
     headers.push_back("Node");
     headers.push_back("FX");
     headers.push_back("FY");
     headers.push_back("MZ");
 
-    for (int j=0; j<elementData.size(); j++)
+    for (unsigned int j=0; j<elementData.size(); j++)
     {
         for (int k=0; k<2; k++)
         {
             if(k==0)
             {
-   std::cout << elementRData[i][j].getSNode() << std::endl;
-
+                elm.push(toString(elementData[j].getID()));
                 elm.push(toString(elementRData[i][j].getSNode()));
                 elm.push(toString(elementRData[i][j].getProperty()[0],tol));
                 elm.push(toString(elementRData[i][j].getProperty()[1],tol));
@@ -118,6 +117,7 @@ for (unsigned int i=0; i< loadComboData.size(); i++)
             }
             else
             {
+                elm.push(toString(" "));
                 elm.push(toString(elementRData[i][j].getENode()));
                 elm.push(toString(elementRData[i][j].getProperty()[3],tol));
                 elm.push(toString(elementRData[i][j].getProperty()[4],tol));
@@ -135,9 +135,11 @@ for (unsigned int i=0; i< loadComboData.size(); i++)
     tb_HR.setTable(headers,dataTable,colSize,align);
 
 
-    output.writeTable(tb_HR,"Displacement Table (Load Case: "+toString(i+1)+")");
+    output.writeTable(tb_HR,"Element Forces Table (Load Case: "+toString(i+1)+")");
     //output.writeTableCopy(tb_HR,"Displacement Table");
 }
     output.close();
+
+
 
 }

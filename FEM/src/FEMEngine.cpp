@@ -186,7 +186,7 @@ for (unsigned int i=0; i < loadComboData.size(); i++)
             {
                 case loadType::EC_Fy :
                 {
-                    matrix f(6,1);
+                    matrix f(6,1); f.setName("local force matrix (f)");
                     matrix L(6,6);
                     for (unsigned int k=0; k<elm.size();k++)
                     {
@@ -203,17 +203,16 @@ for (unsigned int i=0; i < loadComboData.size(); i++)
                         L(5,4) = -m;       L(5,5) =l;
                         L(6,6) = 1;
 
-                        double a = values[1], b=le-a , P = values[0];
+                        double a = values[1], b = le - a , P = values[0];
                         int SN = e.getNodes()[0].getID();
                         int EN = e.getNodes()[1].getID();
-
 
                         for (int j=0; j<3; j++)
                                 ii[j] = IDArray(SN,j+1);
                         for (int j=3; j<6; j++)
                                 ii[j] = IDArray(EN,j-2);
 
-                        f(1,1) = 0; f(2,1) = P*b*b*(le+2*a)/(le*le*le); f(3,1) =    P*a*b*b/(le*le);
+                        f(1,1) = 0; f(2,1) = P*b*b*(le+2*a)/(le*le*le); f(3,1) =  + P*a*b*b/(le*le);
                         f(4,1) = 0; f(5,1) = P*a*a*(le+2*b)/(le*le*le); f(6,1) =  - P*a*a*b/(le*le);
 
                         force(e.getID(),1) = force(e.getID(),1) + f(1,1);
@@ -260,8 +259,36 @@ for (unsigned int i=0; i < loadComboData.size(); i++)
                         if (values.size()==1)
                         {
                             double w = values[0];
+                            f.setValue(0.0);
                             f(1,1) = 0; f(2,1) = w*le/2; f(3,1) = w*le*le/12;
                             f(4,1) = 0; f(5,1) = w*le/2; f(6,1) = -w*le*le/12;
+
+
+                        }
+                        else //parameters should be 3 - intensity, start load dist. from left, end load dist. from left
+                        {
+                            double w = values[0], a = values[1], b = values[2];
+                            double x1 = a, x2 = b;
+
+                            double shape1_x1 = x1 - (x1*x1*x1)/(le*le) + (x1*x1*x1*x1)/(2*le*le*le);
+                            double shape2_x1 = (x1*x1)/2 - (2*x1*x1*x1)/(3*le) + (x1*x1*x1*x1)/(4*le*le);
+                            double shape3_x1 =   (x1*x1*x1)/(le*le) - (x1*x1*x1*x1)/(2*le*le*le);
+                            double shape4_x1 = - (x1*x1*x1)/(3*le)  + (x1*x1*x1*x1)/(4*le*le);
+
+                            double shape1_x2 = x2 - (x2*x2*x2)/(le*le) + (x2*x2*x2*x2)/(2*le*le*le);
+                            double shape2_x2 = (x2*x2)/2 - (2*x2*x2*x2)/(3*le) + (x2*x2*x2*x2)/(4*le*le);
+                            double shape3_x2 =   (x2*x2*x2)/(le*le) - (x2*x2*x2*x2)/(2*le*le*le);
+                            double shape4_x2 = - (x2*x2*x2)/(3*le)  + (x2*x2*x2*x2)/(4*le*le);
+
+                            f.setValue(0.0);
+                            f(1,1) = 0;
+                            f(2,1) = w*(shape1_x2-shape1_x1);
+                            f(3,1) = w*(shape2_x2-shape2_x1);
+                            f(4,1) = 0;
+                            f(5,1) = w*(shape3_x2-shape3_x1);
+                            f(6,1) = w*(shape4_x2-shape4_x1);
+
+                        }
 
                             force(e.getID(),1) = force(e.getID(),1) + f(1,1);
                             force(e.getID(),2) = force(e.getID(),2) + f(2,1);
@@ -269,8 +296,6 @@ for (unsigned int i=0; i < loadComboData.size(); i++)
                             force(e.getID(),4) = force(e.getID(),4) + f(4,1);
                             force(e.getID(),5) = force(e.getID(),5) + f(5,1);
                             force(e.getID(),6) = force(e.getID(),6) + f(6,1);
-
-                        }
 
                         for (int j=0; j<3; j++)
                                 ii[j] = IDArray(SN,j+1);
@@ -288,8 +313,12 @@ for (unsigned int i=0; i < loadComboData.size(); i++)
                     break;
                 }
             }
+
+
+
     }
-   forces.push_back(force);
+    forces.push_back(force);
+    force.setValue(0.0);
 }
 //TO print
 out.writeMatrix(F,15,true);
@@ -509,6 +538,7 @@ if (print == 1)
 
 void FEMEngine::calcElmForces()
 {
+    writer out("output.txt");
 for (unsigned int lc = 0; lc <loadComboData.size(); lc++)
 {
     ElmForce.setSize(elementData.size(),6);
@@ -571,13 +601,15 @@ for (unsigned int lc = 0; lc <loadComboData.size(); lc++)
 
         for (unsigned int j=0; j< ii.size();j++)
         {
-            dsp(j+1,1) = d(ii[j],1);
+            dsp(j+1,1) = d(ii[j],lc+1);
         }
 
         matrix fxr(6,1);
         for (int j=1; j<=6; j++)
             fxr(j,1) = forces[lc](elementData[i].getID(),j);
         matrix cal = ke*L*dsp - fxr;
+        out.writeText("LC = " + toString(lc) + "\t Element = " + toString(elementData[i].getID()));
+        out.writeMatrix(cal,15);
 
                 for (int j=1; j<=6; j++)
                     ElmForce(i+1,j) = cal(j,1);
@@ -586,7 +618,7 @@ for (unsigned int lc = 0; lc <loadComboData.size(); lc++)
     ElmForces.push_back(ElmForce);
 
 }
-    writer out("output.txt");
+
     for (unsigned int i=0; i < ElmForces.size(); i++)
         out.writeMatrix(ElmForces[i],15);
     out.close();
@@ -598,14 +630,14 @@ for (unsigned int lc = 0; lc <loadComboData.size(); lc++)
      ElementResponse ER;
      std::vector<ElementResponse> ERVec;
      std::vector<double> values;
+     std::cout << "Elm forces size = " << ElmForces.size() << std::endl;
      for (unsigned int lc = 0; lc < ElmForces.size(); lc++)
      {
          for (unsigned int e = 0; e < elementData.size(); e++)
          {
              for (int f = 1; f <= 6; f++)
              {
-                    values.push_back( ElmForces[lc](e,f));
-
+                values.push_back(ElmForces[lc](e+1,f));
              }
 
             ER.setID(elementData[e].getID());
@@ -613,12 +645,13 @@ for (unsigned int lc = 0; lc <loadComboData.size(); lc++)
             ER.setNodes(elementData[e].getNodes()[0].getID(),elementData[e].getNodes()[1].getID());
             ER.setProperty(values);
             values.clear();
-
+            ERVec.push_back(ER);
          }
-        ERVec.push_back(ER);
+
         elementRData.push_back(ERVec);
         ERVec.clear();
      }
+
  }
 
 FEMEngine::FEMEngine()
@@ -640,4 +673,90 @@ element & FEMEngine::searchID(std::vector<element> &elData,int _id)
     }
     std::cout << "Element Not Found!" << std::endl;
     return elData[0];
+}
+
+bool FEMEngine::searchElm_in_Load(load &_load, int _elmID)
+{
+
+    for (int i = 0; i < _load.getElements().size(); i++)
+    {
+        if (_load.getElements()[i] = _elmID)
+            return true;
+    }
+    return false;
+}
+
+double FEMEngine::sectionForce(int _lc, int _elementID, double _dist, SFType _type)
+{
+    //Check
+    if (_lc < 1 || _lc > loadComboData.size())
+        std::cout << "Invalid requested load combination number" << std::endl;
+    if (_elementID < 1 || _elementID > elementData.size())
+        std::cout << "Invalid requested element ID number" << std::endl;
+    if (_dist < 0 || _dist > 1)
+        std::cout << "Invalid requested distance (0 < distance < 1)" << std::endl;
+
+
+    double axial = elementRData[_lc-1][_elementID-1].getProperty()[0];
+    double shear = elementRData[_lc-1][_elementID-1].getProperty()[1];
+    double moment = elementRData[_lc-1][_elementID-1].getProperty()[2];
+
+        int i = _elementID;
+        int SN = elementData[i].getNodes()[0].getID();
+        int EN = elementData[i].getNodes()[1].getID();
+        double le = std::sqrt(std::pow(elementData[i].getNodes()[1].getProperty()[0] - elementData[i].getNodes()[0].getProperty()[0],2)
+                    + std::pow(elementData[i].getNodes()[1].getProperty()[1] - elementData[i].getNodes()[0].getProperty()[1],2));
+
+    double FEM = moment;
+    double FEV =  shear;
+    for (unsigned int i=0; i<loadComboData[_lc-1].getProperty().size(); i++)
+    {
+        // For concentrated load in Y direction
+        if (loadComboData[_lc-1].getProperty()[i].getType() == loadType::EC_Fy)
+        {
+            if (_dist*le > loadComboData[_lc-1].getProperty()[i].getValues()[1]
+                && searchElm_in_Load(loadComboData[_lc-1].getProperty()[i],_elementID))
+            {
+
+                moment = moment - loadComboData[_lc-1].getProperty()[i].getValues()[0]
+                                * (_dist*le - loadComboData[_lc-1].getProperty()[i].getValues()[1])
+                                - shear
+                                * (_dist*le - loadComboData[_lc-1].getProperty()[i].getValues()[1]);
+                shear = shear +  loadComboData[_lc-1].getProperty()[i].getValues()[0];
+
+            }
+            else
+            {
+                 moment = moment + shear
+                                * (_dist*le);
+
+            }
+
+            std::cout << "Concentrated Load found"<<std::endl;
+        }
+            else if (loadComboData[_lc-1].getProperty()[i].getType() == loadType::EU_Fy
+                     && searchElm_in_Load(loadComboData[_lc-1].getProperty()[i],_elementID))
+            {
+
+
+
+            std::cout << "Uniformly Distributed Load found" <<std::endl;
+            }
+        else
+            std::cout << "No Load found" <<std::endl;
+    }
+
+
+    switch (_type)
+    {
+    case SFType::AXIAL :
+        return axial; break;
+    case SFType::SHEAR :
+        return shear; break;
+    case SFType::MOMENT :
+        return moment; break;
+    }
+        return axial;
+
+    return 0;
 }

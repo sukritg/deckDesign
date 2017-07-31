@@ -19,6 +19,14 @@
 #include "mathlib.h"
 #include "writer.h"
 #include <iterator>
+
+enum class SFType
+{
+    AXIAL,
+    SHEAR,
+    MOMENT
+};
+
 class FEMEngine
 {
 public:
@@ -42,12 +50,15 @@ public:
 
     void populateNodalResData();
     void populateElementResData();
+    double sectionForce(int _lc, int _elementID, double _dist, SFType _type);
+
 
     void printNodeTable();
     void printElementTable();
+
+
     element & searchID(std::vector<element> &elData,int _id);
-
-
+    bool searchElm_in_Load(load &_load, int _elmID);
 
 protected:
 
@@ -75,8 +86,8 @@ private:
          matrix R;                                  //Reaction matrix
          matrix force;
          std::vector<matrix> forces;
-         matrix ElmForce;
-         std::vector<matrix> ElmForces;                //Element Force Matrix
+         matrix ElmForce;                           //Element Force matrix for one load combination
+         std::vector<matrix> ElmForces;             //Element Force Matrix for all load combinations
 
 
 };

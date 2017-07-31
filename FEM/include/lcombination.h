@@ -29,7 +29,7 @@ public:
     }
     void displayProperty()
     {
-         std::cout << "--------------------------------------------------" << std::endl;
+        std::cout << "--------------------------------------------------" << std::endl;
         std::cout << "Load Combination - " << lcID << std::endl;
         std::cout << "--------------------------------------------------" << std::endl;
         for (unsigned int i=0; i<loads.size();i++)

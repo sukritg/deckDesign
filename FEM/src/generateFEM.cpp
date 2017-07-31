@@ -107,11 +107,11 @@ void inputFileReader::generateFEModel()
             _lData.push_back(loading1);
             el.clear();
             values.clear();
-/*
+
             // Stay in place deck
             for (unsigned int e=1; e<elementData.size()-1; e++)
                  el.push_back(elementData[e].getID());
-            intensity = (WT_SIP/(12*12)) * 12;
+            intensity = (WT_SIP/12)*-1;
             load loading2(iD,loadType::EU_Fy,el);
             values.push_back(intensity);
             loading2.setProperty(values);
@@ -120,8 +120,8 @@ void inputFileReader::generateFEModel()
             _lData.push_back(loading2);
             el.clear();
             values.clear();
-*/
-            // Load combination - 1
+
+         // Load combination - 1
             lCombination lc(lcID);
             lc.setProperty(_lData);
             lcData.push_back(lc);
@@ -171,9 +171,9 @@ void inputFileReader::generateFEModel()
             std::vector<load> _lData;
 
             // Future wearing surface
-             for (unsigned int e=1; e<elementData.size()-1; e++)
+            for (unsigned int e=1; e<elementData.size()-1; e++)
                  el.push_back(elementData[e].getID());
-            intensity = (WT_FWS/(12*12)) * 12 *-1;
+            intensity = (WT_FWS/12) *-1;
             load loading1(iD,loadType::EU_Fy,el);
             values.push_back(intensity);
             loading1.setProperty(values);
@@ -184,10 +184,18 @@ void inputFileReader::generateFEModel()
             values.clear();
 
             int e = 1;
-            intensity = (WT_FWS/(12*12)) * 12 * -1;
+            intensity = (WT_FWS/12) * -1;
             load loading2(iD,loadType::EU_Fy,e);
+
+            int i = e-1;
+            int SN = elementData[i].getNodes()[0].getID();
+            int EN = elementData[i].getNodes()[1].getID();
+            double le = std::sqrt(std::pow(elementData[i].getNodes()[1].getProperty()[0] - elementData[i].getNodes()[0].getProperty()[0],2)
+                       + std::pow(elementData[i].getNodes()[1].getProperty()[1] - elementData[i].getNodes()[0].getProperty()[1],2));
+
             values.push_back(intensity);
             values.push_back(DIST_FWS_LEFT*12);
+            values.push_back(le);
             loading2.setProperty(values);
             loadData.push_back(loading2);
             iD++;
@@ -196,7 +204,7 @@ void inputFileReader::generateFEModel()
             values.clear();
 
             e = elementData[elementData.size()-1].getID();
-            intensity = (WT_FWS/(12*12)) * 12 * -1;
+            intensity = (WT_FWS/12) * -1;
             load loading3(iD,loadType::EU_Fy,e);
             values.push_back(intensity);
             values.push_back(0.0);
