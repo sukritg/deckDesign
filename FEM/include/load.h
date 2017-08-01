@@ -85,10 +85,10 @@ public:
                 std::cout << std::endl;
                 if (values.size()==1)
                     std::cout << "Intensity = " << values[0] << std::endl;
-                else if (values.size()==2)
-                    std::cout << "Intensity = " << values[0] << "\t Local distance from left = " << values[1] << std::endl;
                 else
-                    std::cout << "Intensity = " << values[0] << "\t Local distance from right = " << values[2] << std::endl;
+                    std::cout << "Intensity = " << values[0] << std::endl;
+                    std::cout << "Local distance from left =  " << values[1] << std::endl;
+                    std::cout << "Local distance from right = " << values[2] << std::endl;
                 break;
 
                 break;

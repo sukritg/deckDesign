@@ -30,6 +30,20 @@ std::string toString(T dat, double tol)
     ss.clear();
     return res;
 }
+template <typename T>
+std::string toString(T dat, double tol, bool sci)
+{
+    std::string res;
+    std::stringstream ss;
+    if (std::abs(dat) < tol){dat = 0.0;}
+    if (sci == true)
+        ss << std::scientific << std::setprecision(2) << dat;
+    else
+        ss << std::fixed << std::setprecision(2) << dat;
+    ss>>res;
+    ss.clear();
+    return res;
+}
 
 struct rowData
 {

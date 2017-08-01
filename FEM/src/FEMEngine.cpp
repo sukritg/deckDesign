@@ -678,9 +678,9 @@ element & FEMEngine::searchID(std::vector<element> &elData,int _id)
 bool FEMEngine::searchElm_in_Load(load &_load, int _elmID)
 {
 
-    for (int i = 0; i < _load.getElements().size(); i++)
+    for (unsigned int i = 0; i < _load.getElements().size(); i++)
     {
-        if (_load.getElements()[i] = _elmID)
+        if (_load.getElements()[i] == _elmID)
             return true;
     }
     return false;
@@ -697,55 +697,67 @@ double FEMEngine::sectionForce(int _lc, int _elementID, double _dist, SFType _ty
         std::cout << "Invalid requested distance (0 < distance < 1)" << std::endl;
 
 
-    double axial = elementRData[_lc-1][_elementID-1].getProperty()[0];
-    double shear = elementRData[_lc-1][_elementID-1].getProperty()[1];
-    double moment = elementRData[_lc-1][_elementID-1].getProperty()[2];
+    double FEA = elementRData[_lc-1][_elementID-1].getProperty()[0];
+    double FEV = elementRData[_lc-1][_elementID-1].getProperty()[1];
+    double FEM = elementRData[_lc-1][_elementID-1].getProperty()[2];
 
-        int i = _elementID;
+        int i = _elementID-1;
         int SN = elementData[i].getNodes()[0].getID();
         int EN = elementData[i].getNodes()[1].getID();
         double le = std::sqrt(std::pow(elementData[i].getNodes()[1].getProperty()[0] - elementData[i].getNodes()[0].getProperty()[0],2)
                     + std::pow(elementData[i].getNodes()[1].getProperty()[1] - elementData[i].getNodes()[0].getProperty()[1],2));
+    double axial = 0;
+    double moment = 0;
+    double shear = 0;
 
-    double FEM = moment;
-    double FEV =  shear;
+    axial = axial + FEA;
+    shear = shear + FEV;
+    moment  = moment + FEM - FEV * _dist*le;
+
     for (unsigned int i=0; i<loadComboData[_lc-1].getProperty().size(); i++)
     {
         // For concentrated load in Y direction
-        if (loadComboData[_lc-1].getProperty()[i].getType() == loadType::EC_Fy)
+        if (loadComboData[_lc-1].getProperty()[i].getType() == loadType::EC_Fy
+             && searchElm_in_Load(loadComboData[_lc-1].getProperty()[i],_elementID))
         {
-            if (_dist*le > loadComboData[_lc-1].getProperty()[i].getValues()[1]
-                && searchElm_in_Load(loadComboData[_lc-1].getProperty()[i],_elementID))
+            if (_dist*le > loadComboData[_lc-1].getProperty()[i].getValues()[1])
             {
 
                 moment = moment - loadComboData[_lc-1].getProperty()[i].getValues()[0]
-                                * (_dist*le - loadComboData[_lc-1].getProperty()[i].getValues()[1])
-                                - shear
                                 * (_dist*le - loadComboData[_lc-1].getProperty()[i].getValues()[1]);
+
                 shear = shear +  loadComboData[_lc-1].getProperty()[i].getValues()[0];
 
             }
-            else
-            {
-                 moment = moment + shear
-                                * (_dist*le);
+            else {/*Do nothing*/}
 
-            }
-
-            std::cout << "Concentrated Load found"<<std::endl;
         }
-            else if (loadComboData[_lc-1].getProperty()[i].getType() == loadType::EU_Fy
+        else if (loadComboData[_lc-1].getProperty()[i].getType() == loadType::EU_Fy
                      && searchElm_in_Load(loadComboData[_lc-1].getProperty()[i],_elementID))
             {
-
-
-
-            std::cout << "Uniformly Distributed Load found" <<std::endl;
+                std::vector<double> tmp = loadComboData[_lc-1].getProperty()[i].getValues();
+            if (tmp.size() == 1)
+            {
+                moment = moment - loadComboData[_lc-1].getProperty()[i].getValues()[0] * _dist * _dist * 0.5*le*le;
+                shear = shear + loadComboData[_lc-1].getProperty()[i].getValues()[0] * _dist*le;
             }
-        else
-            std::cout << "No Load found" <<std::endl;
-    }
+            else if(_dist*le > tmp[1] && _dist*le > tmp[2])
+            {
+                moment = moment - loadComboData[_lc-1].getProperty()[i].getValues()[0]
+                * (tmp[2]-tmp[1]) * (_dist*le -  (tmp[1] + 0.5*(tmp[2]-tmp[1])));
+                shear = shear + loadComboData[_lc-1].getProperty()[i].getValues()[0] * (tmp[2]-tmp[1]);
+            }
+            else if (_dist*le >= tmp[1] && _dist*le <= tmp[2])
+            {
+                moment = moment - loadComboData[_lc-1].getProperty()[i].getValues()[0]
+                * (_dist*le-tmp[1]) * 0.5*(_dist*le-tmp[1]);
+                shear = shear + loadComboData[_lc-1].getProperty()[i].getValues()[0] * (_dist*le-tmp[1]);
 
+            }
+            else {/*Do nothing*/}
+            }
+        else {/*Do nothing}*/}
+}
 
     switch (_type)
     {

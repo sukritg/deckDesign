@@ -72,7 +72,7 @@ void writer::writeTable(table &T, std::string title)
         {
             if (align[j]==0)
             {
-                out << std::left << std::setw(colSize[j]) <<   data[i].pull(j);
+                out << std::left << std::setw(colSize[j])  <<  data[i].pull(j);
             }
             else
             {
@@ -195,3 +195,5 @@ void writer::close()
             writeMatrix(mat,width);
         }
  }
+
+

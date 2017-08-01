@@ -55,7 +55,8 @@ public:
 
     void printNodeTable();
     void printElementTable();
-
+    void printSectionForces(std::vector<int> _lc, std::vector<int> _elmID, int _div, SFType _type,
+                            bool _revSign, bool _ft);
 
     element & searchID(std::vector<element> &elData,int _id);
     bool searchElm_in_Load(load &_load, int _elmID);
